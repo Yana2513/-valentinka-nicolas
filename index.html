@@ -50,12 +50,18 @@ button:hover {
     min-height: 100vh;
     color: black;
     position: relative;
+    overflow: hidden;
 }
 #finalMessage {
     font-size: 50px;
     font-weight: bold;
     margin-top: 100px;
-    animation: pulse 1s infinite alternate;
+}
+#finalMessage span {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(-20px);
+    animation: letterAppear 0.5s forwards;
 }
 #heartArt {
     font-size: 100px;
@@ -63,6 +69,7 @@ button:hover {
     animation: heartPulse 1s infinite alternate;
     margin-top: 20px;
 }
+
 /* Пульс сердечка */
 @keyframes heartPulse {
     0% { transform: scale(1); }
@@ -92,7 +99,6 @@ button:hover {
 .heart.pink::before, .heart.pink::after { background-color: hotpink; }
 .heart.yellow { background-color: gold; }
 .heart.yellow::before, .heart.yellow::after { background-color: gold; }
-
 .heart::before { top: -10px; left: 0; }
 .heart::after { top: 0; left: -10px; }
 
@@ -106,9 +112,11 @@ button:hover {
     animation: starFall linear infinite;
     opacity: 0.8;
 }
-@keyframes pulse { 0%{transform:scale(1);}100%{transform:scale(1.3);} }
-@keyframes fall {0%{transform:translateY(0) rotate(45deg);opacity:1;}100%{transform:translateY(700px) rotate(45deg);opacity:0;}}
-@keyframes starFall {0%{transform:translateY(0) scale(1);opacity:1;}100%{transform:translateY(600px) scale(0.5);opacity:0;}}
+
+/* Анимации */
+@keyframes letterAppear { 0%{opacity:0;transform:translateY(-20px);}100%{opacity:1;transform:translateY(0);} }
+@keyframes fall {0%{transform:translateY(0) rotate(0deg);opacity:1;}50%{transform:rotate(180deg);}100%{transform:translateY(700px) rotate(360deg);opacity:0;}}
+@keyframes starFall {0%{transform:translateY(0) scale(1) rotate(0deg);opacity:1;}100%{transform:translateY(600px) scale(0.5) rotate(360deg);opacity:0;}}
 
 /* Адаптив */
 @media(max-width:600px){
@@ -116,6 +124,7 @@ button:hover {
     button{font-size:18px;padding:12px 20px;margin:5px;}
     #message{font-size:20px;}
     #finalMessage{font-size:36px;}
+    #finalMessage span{font-size:36px;}
     #heartArt{font-size:60px;}
     .heart{width:15px;height:15px;}
     .heart::before,.heart::after{width:15px;height:15px;}
@@ -133,7 +142,7 @@ button:hover {
 
 <!-- Финальный экран -->
 <div id="finalScreen">
-    <div id="finalMessage">Я люблю тебя(´｡• ω •｡`) ♡</div>
+    <div id="finalMessage"></div>
     <div id="heartArt">❤</div>
 </div>
 
@@ -141,30 +150,31 @@ button:hover {
 let heartInterval;
 const colors = ["red","pink","yellow"];
 
-// Создание сердечек случайного цвета
+// Создание сердечек
 function createHeart() {
     const heart = document.createElement("div");
     heart.className = "heart " + colors[Math.floor(Math.random()*colors.length)];
-    heart.style.left = Math.random() * window.innerWidth + "px";
-    heart.style.animationDuration = 3 + Math.random() * 2 + "s";
+    heart.style.left = Math.random()*window.innerWidth+"px";
+    heart.style.animationDuration = 3 + Math.random()*2 + "s";
     document.body.appendChild(heart);
     setTimeout(()=>heart.remove(),5000);
 }
 
-// Создание звездочек с разными размерами
+// Создание звездочек
 function createStar() {
-    const star = document.createElement("div");
-    star.className = "star";
-    star.style.left = Math.random()*window.innerWidth + "px";
-    star.style.width = (4+Math.random()*6)+"px";
-    star.style.height = star.style.width;
-    star.style.animationDuration = (2+Math.random()*2)+"s";
+    const star=document.createElement("div");
+    star.className="star";
+    star.style.left=Math.random()*window.innerWidth+"px";
+    const size=4+Math.random()*6;
+    star.style.width=size+"px";
+    star.style.height=size+"px";
+    star.style.animationDuration=(2+Math.random()*2)+"s";
     document.body.appendChild(star);
     setTimeout(()=>star.remove(),3000);
 }
 
 // Диалоги
-const dialogues = {
+const dialogues={
     yes:[
         {text:"sí?", button:"Sí"},
         {text:"¿cree que puede haber tetas?", button:"¡si!!! (´♡‿♡`)"},
@@ -179,6 +189,7 @@ const dialogues = {
     ]
 };
 
+// Старт диалога
 function startDialogue(path){
     let index=0;
     const msg=document.getElementById("message");
@@ -199,12 +210,25 @@ function startDialogue(path){
     nextStep();
 }
 
+// Финальный экран
 function showFinalScreen(){
     document.getElementById("message").style.display="none";
     document.getElementById("buttons").style.display="none";
     const final=document.getElementById("finalScreen");
     final.style.display="block";
 
+    // Анимация букв
+    const text="Я люблю тебя(´｡• ω •｡`) ♡";
+    const finalMsg=document.getElementById("finalMessage");
+    finalMsg.innerHTML="";
+    for(let i=0;i<text.length;i++){
+        const span=document.createElement("span");
+        span.textContent=text[i];
+        span.style.animationDelay=(i*0.1)+"s";
+        finalMsg.appendChild(span);
+    }
+
+    // Сердечки и звездочки
     heartInterval=setInterval(createHeart,300);
     setInterval(createStar,400);
 }
