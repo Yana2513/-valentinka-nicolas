@@ -11,7 +11,6 @@ html, body {
     padding: 0;
     overflow-x: hidden;
 }
-
 body {
     font-family: Arial, sans-serif;
     text-align: center;
@@ -25,12 +24,10 @@ body {
     min-height: 100vh;
     transition: background 1s;
 }
-
 h1 {
     font-size: 40px;
     margin: 20px;
 }
-
 button {
     padding: 15px 30px;
     font-size: 20px;
@@ -40,18 +37,12 @@ button {
     margin: 10px;
     transition: 0.3s;
 }
-
 button:hover {
     transform: scale(1.1);
     background-color: hotpink;
     color: white;
 }
-
-#message {
-    margin-top: 30px;
-    font-size: 24px;
-}
-
+#message { margin-top: 30px; font-size: 24px; }
 #finalScreen {
     display: none;
     background: white;
@@ -60,27 +51,30 @@ button:hover {
     color: black;
     position: relative;
 }
-
 #finalMessage {
     font-size: 50px;
     font-weight: bold;
     margin-top: 100px;
     animation: pulse 1s infinite alternate;
 }
-
 #heartArt {
     font-size: 100px;
     color: crimson;
-    animation: pulse 1s infinite alternate;
+    animation: heartPulse 1s infinite alternate;
     margin-top: 20px;
 }
+/* Пульс сердечка */
+@keyframes heartPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
 
-/* Падающие сердечки */
+/* Падающие разноцветные сердечки */
 .heart {
     position: absolute;
     width: 20px;
     height: 20px;
-    background-color: crimson;
     transform: rotate(45deg);
     animation: fall 5s linear infinite;
     z-index: 9999;
@@ -90,9 +84,15 @@ button:hover {
     position: absolute;
     width: 20px;
     height: 20px;
-    background-color: crimson;
     border-radius: 50%;
 }
+.heart.red { background-color: crimson; }
+.heart.red::before, .heart.red::after { background-color: crimson; }
+.heart.pink { background-color: hotpink; }
+.heart.pink::before, .heart.pink::after { background-color: hotpink; }
+.heart.yellow { background-color: gold; }
+.heart.yellow::before, .heart.yellow::after { background-color: gold; }
+
 .heart::before { top: -10px; left: 0; }
 .heart::after { top: 0; left: -10px; }
 
@@ -104,33 +104,22 @@ button:hover {
     background: gold;
     border-radius: 50%;
     animation: starFall linear infinite;
+    opacity: 0.8;
 }
+@keyframes pulse { 0%{transform:scale(1);}100%{transform:scale(1.3);} }
+@keyframes fall {0%{transform:translateY(0) rotate(45deg);opacity:1;}100%{transform:translateY(700px) rotate(45deg);opacity:0;}}
+@keyframes starFall {0%{transform:translateY(0) scale(1);opacity:1;}100%{transform:translateY(600px) scale(0.5);opacity:0;}}
 
-@keyframes pulse {
-    0% { transform: scale(1); }
-    100% { transform: scale(1.3); }
-}
-
-@keyframes fall {
-    0% { transform: translateY(0) rotate(45deg); opacity: 1; }
-    100% { transform: translateY(700px) rotate(45deg); opacity: 0; }
-}
-
-@keyframes starFall {
-    0% { transform: translateY(0) scale(1); opacity: 1; }
-    100% { transform: translateY(600px) scale(0.5); opacity: 0; }
-}
-
-/* Адаптив для мобильных */
-@media (max-width: 600px) {
-    h1 { font-size: 28px; padding: 10px; }
-    button { font-size: 18px; padding: 12px 20px; margin: 5px; }
-    #message { font-size: 20px; }
-    #finalMessage { font-size: 36px; }
-    #heartArt { font-size: 60px; }
-    .heart { width: 15px; height: 15px; }
-    .heart::before, .heart::after { width: 15px; height: 15px; }
-    .star { width: 6px; height: 6px; }
+/* Адаптив */
+@media(max-width:600px){
+    h1{font-size:28px;padding:10px;}
+    button{font-size:18px;padding:12px 20px;margin:5px;}
+    #message{font-size:20px;}
+    #finalMessage{font-size:36px;}
+    #heartArt{font-size:60px;}
+    .heart{width:15px;height:15px;}
+    .heart::before,.heart::after{width:15px;height:15px;}
+    .star{width:6px;height:6px;}
 }
 </style>
 </head>
@@ -150,79 +139,78 @@ button:hover {
 
 <script>
 let heartInterval;
+const colors = ["red","pink","yellow"];
 
-// Создание сердечек
+// Создание сердечек случайного цвета
 function createHeart() {
     const heart = document.createElement("div");
-    heart.className = "heart";
+    heart.className = "heart " + colors[Math.floor(Math.random()*colors.length)];
     heart.style.left = Math.random() * window.innerWidth + "px";
     heart.style.animationDuration = 3 + Math.random() * 2 + "s";
     document.body.appendChild(heart);
-    setTimeout(() => heart.remove(), 5000);
+    setTimeout(()=>heart.remove(),5000);
 }
 
-// Создание звездочек
+// Создание звездочек с разными размерами
 function createStar() {
     const star = document.createElement("div");
     star.className = "star";
-    star.style.left = Math.random() * window.innerWidth + "px";
-    star.style.animationDuration = 2 + Math.random() * 2 + "s";
+    star.style.left = Math.random()*window.innerWidth + "px";
+    star.style.width = (4+Math.random()*6)+"px";
+    star.style.height = star.style.width;
+    star.style.animationDuration = (2+Math.random()*2)+"s";
     document.body.appendChild(star);
-    setTimeout(() => star.remove(), 3000);
+    setTimeout(()=>star.remove(),3000);
 }
 
 // Диалоги
 const dialogues = {
-    yes: [
-        {text: "sí?", button: "Sí"},
-        {text: "¿cree que puede haber tetas?", button: "¡si!!! (´♡‿♡`)"},
-        {text: "¡no son tetas!", button: "NOOO (ಥ﹏ಥ)"},
-        {text: "¡Vete al diablo!٩(ఠ益ఠ)۶", button: "aceptar y llorar (╥_╥)"}
+    yes:[
+        {text:"sí?", button:"Sí"},
+        {text:"¿cree que puede haber tetas?", button:"¡si!!! (´♡‿♡`)"},
+        {text:"¡no son tetas!", button:"NOOO (ಥ﹏ಥ)"},
+        {text:"¡Vete al diablo!٩(ఠ益ఠ)۶", button:"aceptar y llorar (╥_╥)"}
     ],
-    no: [
-        {text: "sí", button: "no"},
-        {text: "Sí!(ノ°益°)ノ", button: "NO! (☆ω☆)"},
-        {text: "Si.", button: "sí, soy un idiota"},
-        {text: "sí, lo sé (￢‿￢ )", button: "aceptar y llorar (╥_╥)"}
+    no:[
+        {text:"sí", button:"no"},
+        {text:"Sí!(ノ°益°)ノ", button:"NO! (☆ω☆)"},
+        {text:"Si.", button:"sí, soy un idiota"},
+        {text:"sí, lo sé (￢‿￢ )", button:"aceptar y llorar (╥_╥)"}
     ]
 };
 
-// Управление диалогом
-function startDialogue(path) {
-    let index = 0;
-    const messageDiv = document.getElementById("message");
-    const buttonsDiv = document.getElementById("buttons");
+function startDialogue(path){
+    let index=0;
+    const msg=document.getElementById("message");
+    const btnDiv=document.getElementById("buttons");
 
-    function nextStep() {
-        if (index < path.length) {
-            messageDiv.innerHTML = path[index].text;
-            buttonsDiv.innerHTML = `<button id="dialogBtn">${path[index].button}</button>`;
-            document.getElementById("dialogBtn").onclick = () => {
+    function nextStep(){
+        if(index<path.length){
+            msg.innerHTML=path[index].text;
+            btnDiv.innerHTML=`<button id="dialogBtn">${path[index].button}</button>`;
+            document.getElementById("dialogBtn").onclick=()=>{
                 index++;
                 nextStep();
             };
-        } else {
+        }else{
             showFinalScreen();
         }
     }
     nextStep();
 }
 
-// Финальный экран
-function showFinalScreen() {
-    document.getElementById("message").style.display = "none";
-    document.getElementById("buttons").style.display = "none";
-    const finalScreen = document.getElementById("finalScreen");
-    finalScreen.style.display = "block";
+function showFinalScreen(){
+    document.getElementById("message").style.display="none";
+    document.getElementById("buttons").style.display="none";
+    const final=document.getElementById("finalScreen");
+    final.style.display="block";
 
-    // Запуск сердечек и звездочек
-    heartInterval = setInterval(createHeart, 300);
-    setInterval(createStar, 400);
+    heartInterval=setInterval(createHeart,300);
+    setInterval(createStar,400);
 }
 
-// Начало истории
-document.getElementById("btnYes").onclick = () => startDialogue(dialogues.yes);
-document.getElementById("btnNo").onclick = () => startDialogue(dialogues.no);
+document.getElementById("btnYes").onclick=()=>startDialogue(dialogues.yes);
+document.getElementById("btnNo").onclick=()=>startDialogue(dialogues.no);
 </script>
 </body>
 </html>
