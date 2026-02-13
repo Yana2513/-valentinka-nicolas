@@ -1,6 +1,149 @@
-git clone https://github.com/твоёимя/valentinka-nicolas.git
-cd valentinka-nicolas
-# Копируешь index.html сюда
-git add index.html
-git commit -m "Добавила валентинку"
-git push origin main
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Para ti, Nicolás</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 100px;
+            background-color: #111; /* по умолчанию темный */
+            color: white;
+            overflow-x: hidden;
+        }
+
+        h1 {
+            font-size: 40px;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 10px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            transform: scale(1.1);
+        }
+
+        #message {
+            margin-top: 30px;
+            font-size: 24px;
+        }
+
+        /* Падающие сердечки */
+        .heart {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: crimson;
+            transform: rotate(45deg);
+            animation: fall 5s linear infinite;
+            z-index: 9999;
+        }
+
+        .heart::before,
+        .heart::after {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: crimson;
+            border-radius: 50%;
+        }
+
+        .heart::before {
+            top: -10px;
+            left: 0;
+        }
+
+        .heart::after {
+            top: 0;
+            left: -10px;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(0) rotate(45deg); opacity: 1; }
+            100% { transform: translateY(700px) rotate(45deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <h1>¿Eres un idiota? (♡°▽°♡)</h1>
+    <button onclick="yes()">Sí</button>
+    <button onclick="no()">No</button>
+
+    <p id="message"></p>
+
+    <!-- Невидимый плеер для музыки Да -->
+    <audio id="bgMusic" loop>
+        <source src="https://www.chosic.com/free-music/track/relaxing-background-music/" type="audio/mpeg">
+    </audio>
+
+    <script>
+        function createHeart() {
+            const heart = document.createElement("div");
+            heart.className = "heart";
+            heart.style.left = Math.random() * window.innerWidth + "px";
+            heart.style.animationDuration = 3 + Math.random() * 2 + "s";
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 5000);
+        }
+
+        let heartInterval;
+
+        function yes() {
+            // Меняем фон на нежный градиент
+            document.body.style.background = "linear-gradient(135deg, #ff9a9e, #fad0c4)";
+            document.body.style.color = "black";
+
+            // Показываем текст
+            document.getElementById("message").innerHTML = "Я люблю тебя(´｡• ω •｡`) ♡";
+
+            // Стартуем сердечки
+            heartInterval = setInterval(createHeart, 300);
+
+            // Включаем музыку
+            const music = document.getElementById("bgMusic");
+            music.src = "https://www.chosic.com/wp-content/uploads/2021/07/Religious-Piano-Emotional-Piano.mp3"; // бесплатный трек
+            music.play();
+        }
+
+        function no() {
+            // Останавливаем сердечки если нажали "No"
+            if (heartInterval) clearInterval(heartInterval);
+
+            // Меняем фон на темный
+            document.body.style.background = "#111";
+            document.body.style.color = "white";
+
+            // Скример
+            const scream = document.createElement("img");
+            scream.src = "https://i.imgur.com/3XjK4nB.png"; // страшная картинка
+            scream.style.position = "fixed";
+            scream.style.top = "0";
+            scream.style.left = "0";
+            scream.style.width = "100%";
+            scream.style.height = "100%";
+            scream.style.zIndex = "99999";
+            document.body.appendChild(scream);
+
+            // Звук скримера
+            const screamAudio = new Audio("https://www.myinstants.com/media/sounds/scary-scream.mp3");
+            screamAudio.play();
+
+            // Скрываем скример через 3 секунды
+            setTimeout(() => scream.remove(), 3000);
+
+            // Очищаем текст
+            document.getElementById("message").innerHTML = "";
+        }
+    </script>
+</body>
+</html>
