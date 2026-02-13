@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Carta para ti 💌</title>
+<title>para ti, Nicolás 💌</title>
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
@@ -10,16 +10,14 @@ body {
     margin: 0;
     font-family: 'Quicksand', sans-serif;
     background: linear-gradient(135deg, #ffd6e8, #ffeccf);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    text-align: center;
     overflow: hidden;
+    text-align: center;
 }
 
 .screen {
     display: none;
+    min-height: 100vh;
+    padding-top: 80px;
     animation: fade 0.8s ease;
 }
 
@@ -28,7 +26,7 @@ body {
 }
 
 button {
-    margin-top: 20px;
+    margin: 15px;
     padding: 12px 25px;
     border-radius: 25px;
     border: none;
@@ -56,8 +54,8 @@ h1 {
 }
 
 .big-love {
-    font-size: 40px;
-    margin-top: 10px;
+    font-size: 42px;
+    margin-top: 20px;
     animation: pulse 1.5s infinite;
 }
 
@@ -70,6 +68,38 @@ h1 {
     0% {transform: scale(1);}
     50% {transform: scale(1.1);}
     100% {transform: scale(1);}
+}
+
+/* Падающие сердечки */
+
+.heart {
+    position: fixed;
+    top: -20px;
+    width: 15px;
+    height: 15px;
+    background: pink;
+    transform: rotate(45deg);
+    animation: fall linear infinite;
+    z-index: -1;
+}
+
+.heart::before,
+.heart::after {
+    content: "";
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    background: pink;
+    border-radius: 50%;
+}
+
+.heart::before { top: -8px; left: 0; }
+.heart::after { left: -8px; top: 0; }
+
+@keyframes fall {
+    to {
+        transform: translateY(100vh) rotate(360deg);
+    }
 }
 </style>
 </head>
@@ -86,11 +116,18 @@ h1 {
 <div id="screen2" class="screen">
     <img src="https://media.tenor.com/2roX3uxz_68AAAAi/cute-cat.gif">
     <h1>¿Quieres abrirla? (´• ω •`)</h1>
+    <button onclick="next(4)">No abrir</button>
     <button onclick="next(3)">Abrir</button>
-    <button onclick="next(3)">No abrir</button>
 </div>
 
-<!-- SCREEN 3 -->
+<!-- SCREEN NO -->
+<div id="screen4" class="screen">
+    <h1>¿Por qué? ٩(ఠ益ఠ)۶</h1>
+    <button onclick="next(2)">Volver</button>
+    <button onclick="forceYes()">Sí...</button>
+</div>
+
+<!-- FINAL SCREEN -->
 <div id="screen3" class="screen">
     <img src="https://media.tenor.com/TKpmwX0bq3MAAAAi/hello-kitty.gif">
     <h1>Oh no, no son tetas</h1>
@@ -102,6 +139,24 @@ function next(screenNumber) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById('screen' + screenNumber).classList.add('active');
 }
+
+function forceYes() {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen3').classList.add('active');
+}
+
+/* Сердечки всегда */
+function createHeart() {
+    const heart = document.createElement("div");
+    heart.classList.add("heart");
+    heart.style.left = Math.random() * window.innerWidth + "px";
+    heart.style.animationDuration = 4 + Math.random() * 4 + "s";
+    document.body.appendChild(heart);
+
+    setTimeout(() => heart.remove(), 8000);
+}
+
+setInterval(createHeart, 300);
 </script>
 
 </body>
