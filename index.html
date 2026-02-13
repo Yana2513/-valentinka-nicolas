@@ -52,17 +52,27 @@ button:hover {
     font-size: 24px;
 }
 
+#finalScreen {
+    display: none;
+    background: white;
+    width: 100%;
+    min-height: 100vh;
+    color: black;
+    position: relative;
+}
+
 #finalMessage {
     font-size: 50px;
     font-weight: bold;
-    display: none;
-    color: crimson;
+    margin-top: 100px;
     animation: pulse 1s infinite alternate;
 }
 
-@keyframes pulse {
-    0% { transform: scale(1); }
-    100% { transform: scale(1.3); }
+#heartArt {
+    font-size: 100px;
+    color: crimson;
+    animation: pulse 1s infinite alternate;
+    margin-top: 20px;
 }
 
 /* Падающие сердечки */
@@ -96,6 +106,11 @@ button:hover {
     animation: starFall linear infinite;
 }
 
+@keyframes pulse {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.3); }
+}
+
 @keyframes fall {
     0% { transform: translateY(0) rotate(45deg); opacity: 1; }
     100% { transform: translateY(700px) rotate(45deg); opacity: 0; }
@@ -112,6 +127,7 @@ button:hover {
     button { font-size: 18px; padding: 12px 20px; margin: 5px; }
     #message { font-size: 20px; }
     #finalMessage { font-size: 36px; }
+    #heartArt { font-size: 60px; }
     .heart { width: 15px; height: 15px; }
     .heart::before, .heart::after { width: 15px; height: 15px; }
     .star { width: 6px; height: 6px; }
@@ -120,12 +136,17 @@ button:hover {
 </head>
 <body>
 <h1>¿Eres un idiota? (♡°▽°♡)</h1>
-<button id="btnYes">Sí</button>
-<button id="btnNo">No</button>
+<div id="message"></div>
+<div id="buttons">
+    <button id="btnYes">Sí</button>
+    <button id="btnNo">No</button>
+</div>
 
-<p id="message"></p>
-<div id="nextButtonContainer"></div>
-<div id="finalMessage">Я люблю тебя(´｡• ω •｡`) ♡</div>
+<!-- Финальный экран -->
+<div id="finalScreen">
+    <div id="finalMessage">Я люблю тебя(´｡• ω •｡`) ♡</div>
+    <div id="heartArt">❤</div>
+</div>
 
 <script>
 let heartInterval;
@@ -150,43 +171,58 @@ function createStar() {
     setTimeout(() => star.remove(), 3000);
 }
 
-// Нажатие на Sí
-document.getElementById("btnYes").onclick = function() {
-    document.getElementById("message").innerHTML = "Sí, lo sé. ;)";
-    document.getElementById("nextButtonContainer").innerHTML = '<button id="nextYes">¿y ahora qué?</button>';
-
-    document.getElementById("nextYes").onclick = function() {
-        showFinalScreen();
-    };
+// Диалоги
+const dialogues = {
+    yes: [
+        {text: "sí?", button: "Sí"},
+        {text: "¿cree que puede haber tetas?", button: "¡si!!! (´♡‿♡`)"},
+        {text: "¡no son tetas!", button: "NOOO (ಥ﹏ಥ)"},
+        {text: "¡Vete al diablo!٩(ఠ益ఠ)۶", button: "aceptar y llorar (╥_╥)"}
+    ],
+    no: [
+        {text: "sí", button: "no"},
+        {text: "Sí!(ノ°益°)ノ", button: "NO! (☆ω☆)"},
+        {text: "Si.", button: "sí, soy un idiota"},
+        {text: "sí, lo sé (￢‿￢ )", button: "aceptar y llorar (╥_╥)"}
+    ]
 };
 
-// Нажатие на No
-document.getElementById("btnNo").onclick = function() {
-    document.getElementById("message").innerHTML = "¿estás seguro de eso?";
-    document.getElementById("nextButtonContainer").innerHTML = '<button id="nextNo">¿y ahora qué?</button>';
+// Управление диалогом
+function startDialogue(path) {
+    let index = 0;
+    const messageDiv = document.getElementById("message");
+    const buttonsDiv = document.getElementById("buttons");
 
-    document.getElementById("nextNo").onclick = function() {
-        showFinalScreen();
-    };
-};
+    function nextStep() {
+        if (index < path.length) {
+            messageDiv.innerHTML = path[index].text;
+            buttonsDiv.innerHTML = `<button id="dialogBtn">${path[index].button}</button>`;
+            document.getElementById("dialogBtn").onclick = () => {
+                index++;
+                nextStep();
+            };
+        } else {
+            showFinalScreen();
+        }
+    }
+    nextStep();
+}
 
-// Финальный экран с белым фоном и анимацией
+// Финальный экран
 function showFinalScreen() {
     document.getElementById("message").style.display = "none";
-    document.getElementById("nextButtonContainer").style.display = "none";
-    document.getElementById("btnYes").style.display = "none";
-    document.getElementById("btnNo").style.display = "none";
+    document.getElementById("buttons").style.display = "none";
+    const finalScreen = document.getElementById("finalScreen");
+    finalScreen.style.display = "block";
 
-    document.body.style.background = "white";
-    document.body.style.color = "black";
-
-    const finalMessage = document.getElementById("finalMessage");
-    finalMessage.style.display = "block";
-
-    // Сердечки и звездочки
+    // Запуск сердечек и звездочек
     heartInterval = setInterval(createHeart, 300);
     setInterval(createStar, 400);
 }
+
+// Начало истории
+document.getElementById("btnYes").onclick = () => startDialogue(dialogues.yes);
+document.getElementById("btnNo").onclick = () => startDialogue(dialogues.no);
 </script>
 </body>
 </html>
