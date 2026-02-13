@@ -1,122 +1,172 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Para ti, Nicolás</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding-top: 100px;
-            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-            color: black;
-            overflow-x: hidden;
-        }
+<meta charset="UTF-8">
+<title>Para ti, Nicolás</title>
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding-top: 100px;
+    background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+    color: black;
+    overflow-x: hidden;
+    transition: background 1s;
+}
 
-        h1 {
-            font-size: 40px;
-        }
+h1 {
+    font-size: 40px;
+}
 
-        button {
-            padding: 15px 30px;
-            font-size: 20px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            margin: 10px;
-            transition: 0.3s;
-        }
+button {
+    padding: 15px 30px;
+    font-size: 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 10px;
+    transition: 0.3s;
+}
 
-        button:hover {
-            transform: scale(1.1);
-            background-color: hotpink;
-            color: white;
-        }
+button:hover {
+    transform: scale(1.1);
+    background-color: hotpink;
+    color: white;
+}
 
-        #message {
-            margin-top: 30px;
-            font-size: 24px;
-        }
+#message {
+    margin-top: 30px;
+    font-size: 24px;
+}
 
-        /* Падающие сердечки */
-        .heart {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background-color: crimson;
-            transform: rotate(45deg);
-            animation: fall 5s linear infinite;
-            z-index: 9999;
-        }
+#finalMessage {
+    font-size: 50px;
+    font-weight: bold;
+    display: none;
+    color: crimson;
+    animation: pulse 1s infinite alternate;
+}
 
-        .heart::before,
-        .heart::after {
-            content: "";
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background-color: crimson;
-            border-radius: 50%;
-        }
+@keyframes pulse {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.3); }
+}
 
-        .heart::before { top: -10px; left: 0; }
-        .heart::after { top: 0; left: -10px; }
+/* Падающие сердечки */
+.heart {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: crimson;
+    transform: rotate(45deg);
+    animation: fall 5s linear infinite;
+    z-index: 9999;
+}
+.heart::before, .heart::after {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: crimson;
+    border-radius: 50%;
+}
+.heart::before { top: -10px; left: 0; }
+.heart::after { top: 0; left: -10px; }
+@keyframes fall {
+    0% { transform: translateY(0) rotate(45deg); opacity: 1; }
+    100% { transform: translateY(700px) rotate(45deg); opacity: 0; }
+}
 
-        @keyframes fall {
-            0% { transform: translateY(0) rotate(45deg); opacity: 1; }
-            100% { transform: translateY(700px) rotate(45deg); opacity: 0; }
-        }
-    </style>
+/* Анимированные звездочки */
+.star {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: gold;
+    border-radius: 50%;
+    animation: starFall linear infinite;
+}
+@keyframes starFall {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(600px) scale(0.5); opacity: 0; }
+}
+</style>
 </head>
 <body>
-    <h1>¿Eres un idiota? (♡°▽°♡)</h1>
-    <button id="btnYes">Sí</button>
-    <button id="btnNo">No</button>
+<h1>¿Eres un idiota? (♡°▽°♡)</h1>
+<button id="btnYes">Sí</button>
+<button id="btnNo">No</button>
 
-    <p id="message"></p>
-    <div id="nextButtonContainer"></div>
+<p id="message"></p>
+<div id="nextButtonContainer"></div>
+<div id="finalMessage">Я люблю тебя(´｡• ω •｡`) ♡</div>
 
-    <script>
-        // Функция для создания сердечек
-        function createHeart() {
-            const heart = document.createElement("div");
-            heart.className = "heart";
-            heart.style.left = Math.random() * window.innerWidth + "px";
-            heart.style.animationDuration = 3 + Math.random() * 2 + "s";
-            document.body.appendChild(heart);
-            setTimeout(() => heart.remove(), 5000);
-        }
+<script>
+let heartInterval;
 
-        let heartInterval;
+// Функция сердечек
+function createHeart() {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.style.left = Math.random() * window.innerWidth + "px";
+    heart.style.animationDuration = 3 + Math.random() * 2 + "s";
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 5000);
+}
 
-        // Нажатие на "Sí"
-        document.getElementById("btnYes").onclick = function() {
-            document.getElementById("message").innerHTML = "Sí, lo sé. ;)";
-            document.getElementById("nextButtonContainer").innerHTML = '<button id="nextYes">¿y ahora qué?</button>';
+// Функция звездочек
+function createStar() {
+    const star = document.createElement("div");
+    star.className = "star";
+    star.style.left = Math.random() * window.innerWidth + "px";
+    star.style.animationDuration = 2 + Math.random() * 2 + "s";
+    document.body.appendChild(star);
+    setTimeout(() => star.remove(), 3000);
+}
 
-            document.getElementById("nextYes").onclick = function() {
-                startHeartsAndMessage();
-            };
-        };
+// Нажатие на "Sí"
+document.getElementById("btnYes").onclick = function() {
+    document.getElementById("message").innerHTML = "Sí, lo sé. ;)";
+    document.getElementById("nextButtonContainer").innerHTML = '<button id="nextYes">¿y ahora qué?</button>';
 
-        // Нажатие на "No"
-        document.getElementById("btnNo").onclick = function() {
-            document.getElementById("message").innerHTML = "¿estás seguro de eso?";
-            document.getElementById("nextButtonContainer").innerHTML = '<button id="nextNo">¿y ahora qué?</button>';
+    document.getElementById("nextYes").onclick = function() {
+        showFinalScreen();
+    };
+};
 
-            document.getElementById("nextNo").onclick = function() {
-                startHeartsAndMessage();
-            };
-        };
+// Нажатие на "No"
+document.getElementById("btnNo").onclick = function() {
+    document.getElementById("message").innerHTML = "¿estás seguro de eso?";
+    document.getElementById("nextButtonContainer").innerHTML = '<button id="nextNo">¿y ahora qué?</button>';
 
-        // Функция, которая показывает финальный текст и сердечки
-        function startHeartsAndMessage() {
-            document.getElementById("message").innerHTML = "Я люблю тебя(´｡• ω •｡`) ♡";
+    document.getElementById("nextNo").onclick = function() {
+        showFinalScreen();
+    };
+};
 
-            // Начинаем падающие сердечки
-            heartInterval = setInterval(createHeart, 300);
-        }
-    </script>
+// Финальный экран с надписью и анимацией
+function showFinalScreen() {
+    // Скрываем предыдущие кнопки и текст
+    document.getElementById("message").style.display = "none";
+    document.getElementById("nextButtonContainer").style.display = "none";
+    document.getElementById("btnYes").style.display = "none";
+    document.getElementById("btnNo").style.display = "none";
+
+    // Меняем фон на белый
+    document.body.style.background = "white";
+    document.body.style.color = "black";
+
+    // Показываем надпись
+    const finalMessage = document.getElementById("finalMessage");
+    finalMessage.style.display = "block";
+
+    // Запуск сердечек
+    heartInterval = setInterval(createHeart, 300);
+
+    // Запуск звездочек
+    setInterval(createStar, 400);
+}
+</script>
 </body>
 </html>
